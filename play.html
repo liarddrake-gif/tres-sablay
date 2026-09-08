@@ -100,7 +100,7 @@
 <audio id="bg-music" loop src="sounds/funny.mp3"></audio>
 
 <!-- Music Toggle Button -->
-<button id="music-toggle" onclick="toggleMusic()">🔊</button>
+<button id="music-toggle" onclick="toggleMusic()">🔇</button>
 
 <!-- Animated Carnival Background -->
 <img src="images/Carnival_BG.gif" id="bg-gif" alt="Carnival Background">
@@ -220,21 +220,26 @@
     }
 
     // ==========================================
-    // MUSIC CONTROLLER
+    // MUSIC CONTROLLER (FIXED LOGIC)
     // ==========================================
     const bgMusic = document.getElementById('bg-music');
-    let musicOn = false;
+    let musicOn = false; // Starts muted
 
-    function toggleMusic() {
-        musicOn = !musicOn;
+    function setMusic(on) {
         const btn = document.getElementById('music-toggle');
-        if (musicOn) {
+        if (on) {
             bgMusic.play().catch(e => console.log("Music play blocked"));
-            btn.textContent = "🔇";
+            btn.textContent = "🔊"; // Show playing icon
+            musicOn = true;
         } else {
             bgMusic.pause();
-            btn.textContent = "🔊";
+            btn.textContent = "🔇"; // Show muted icon
+            musicOn = false;
         }
+    }
+
+    function toggleMusic() {
+        setMusic(!musicOn);
     }
 
     // ==========================================
@@ -292,7 +297,7 @@
 
     function startGame() {
         playSound('click');
-        if (!musicOn) toggleMusic(); // Start music on first interaction
+        if (!musicOn) setMusic(true); // Auto-start music on first interaction
         showScreen('game-screen');
         restart();
     }
@@ -338,7 +343,7 @@
 
         if (checkWin(currentTurn)) {
             gameOver = true;
-            playSound('lose'); // Play lose sound when 3 in a row is hit
+            playSound('lose');
             const loser = currentTurn;
             const rival = loser === 'X' ? 'O' : 'X';
             document.getElementById('status').textContent = `NAKATLONG SI ${loser}! SASAGOT SI ${rival}!`;
@@ -390,12 +395,12 @@
         resultEl.style.display = 'block';
 
         if (selected === correct) {
-            playSound('win'); // Play win sound for correct answer
+            playSound('win');
             resultEl.textContent = `✔ TAMA!\nNanalo si ${rival} — Natalo si ${loser}!`;
             resultEl.style.color = '#ffd43b';
             document.getElementById('status').textContent = `★ NANALO SI ${rival}! ★`;
         } else {
-            playSound('lose'); // Play lose sound for wrong answer
+            playSound('lose');
             resultEl.textContent = `✘ MALI! Ang tamang sagot ay "${correct}".\nNanalo si ${loser} — Natalo si ${rival}!`;
             resultEl.style.color = '#e6372f';
             document.getElementById('status').textContent = `★ NANALO SI ${loser}! ★`;
