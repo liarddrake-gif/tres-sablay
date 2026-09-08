@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Play TRES, SABLAY! | Peryahan ng Talino</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { font-family: 'Poppins', sans-serif; background: #050a1f; color: #fff; overflow-x: hidden; }
+    body::before { content: ""; position: fixed; top: 0; left: 0; width: 100%; height: 10px; background: repeating-linear-gradient(90deg, #e6372f 0px, #e6372f 80px, #fff2c7 80px, #fff2c7 160px); z-index: 9999; box-shadow: 0 0 15px rgba(255, 212, 59, 0.5); }
+
+    nav { position: fixed; top: 10px; left: 0; width: 100%; padding: 15px 7%; display: flex; justify-content: space-between; align-items: center; background: rgba(5, 10, 31, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(255, 212, 59, 0.3); z-index: 1000; }
+    .nav-logo { font-family: 'Luckiest Guy', cursive; font-size: 24px; color: #ffd43b; text-shadow: 2px 2px 0 #d92323; text-decoration: none; }
+    .nav-logo span { color: #fff; text-decoration: none; margin-left: 15px; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; opacity: 0.8; }
+
+    .hero-game { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 20px 50px; position: relative; overflow: hidden; }
+    .hero-game::before { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(5, 10, 31, 0.8), rgba(5, 10, 31, 0.95)), url("images/screenshot1.png"); background-size: cover; background-position: center; z-index: -1; animation: slowZoom 20s ease-in-out infinite alternate; }
+    @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
+
+    .game-logo { width: 200px; margin-bottom: 15px; filter: drop-shadow(0 0 15px rgba(255, 210, 50, 0.8)); animation: logoFloat 4s ease-in-out infinite; }
+    @keyframes logoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+
+    .subtitle { font-family: 'Luckiest Guy', cursive; font-size: 24px; color: #ffd43b; text-shadow: 2px 2px 0 #b91d1d; margin-bottom: 5px; }
+    .hint { font-size: 14px; color: #e6372f; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; }
+    .status { font-family: 'Luckiest Guy', cursive; font-size: 28px; color: #fff; margin: 15px 0; text-shadow: 2px 2px 0 #000; min-height: 40px; }
+
+    .board { display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); gap: 12px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 20px; border: 2px solid #ffd43b; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
+    .cell { background: #152b6a; border: 2px solid #ffd43b; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-family: 'Luckiest Guy', cursive; font-size: 3.5rem; cursor: pointer; transition: all 0.2s; user-select: none; }
+    .cell:hover:not(.taken) { background: #1d3a85; transform: scale(0.95); }
+    .cell.x { color: #e6372f; text-shadow: 0 0 15px rgba(230,55,47,0.8); }
+    .cell.o { color: #ffd43b; text-shadow: 0 0 15px rgba(255,212,59,0.8); }
+    .cell.taken { cursor: not-allowed; }
+
+    .btn { display: inline-block; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 15px; transition: 0.2s; cursor: pointer; border: 2px solid; text-transform: uppercase; margin-top: 20px; }
+    .btn-primary { background: #e6372f; color: white; border-color: #ffd43b; box-shadow: 0 5px 0 #9e1714; }
+    .btn-secondary { background: #fff2c7; color: #10265e; border-color: #ffd43b; box-shadow: 0 5px 0 #b89c4a; margin-left: 10px; }
+    .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #9e1714; }
+
+    /* Trivia Popup */
+    .popup-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
+    .popup { background: #050a1f; border: 4px solid #ffd43b; border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(255,212,59,0.3); }
+    .popup h2 { font-family: 'Luckiest Guy', cursive; color: #ffd43b; font-size: 28px; margin-bottom: 15px; text-shadow: 2px 2px 0 #b91d1d; }
+    .popup p { color: #fff; margin-bottom: 10px; font-size: 16px; }
+    .question-box { background: rgba(255,212,59,0.1); border: 2px solid #ffd43b; border-radius: 12px; padding: 20px; margin: 20px 0; }
+    .question-box p { font-size: 18px; font-weight: 700; white-space: pre-line; color: #fff; }
+    .answer-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; font-size: 16px; font-weight: 700; background: #fff2c7; color: #050a1f; border: 2px solid #e6372f; border-radius: 10px; cursor: pointer; transition: 0.2s; }
+    .answer-btn:hover { background: #ffd43b; transform: scale(0.98); }
+    .answer-btn.correct { background: #4caf50; color: white; border-color: #4caf50; }
+    .answer-btn.wrong { background: #e6372f; color: white; border-color: #e6372f; }
+    .answer-btn:disabled { cursor: not-allowed; opacity: 0.8; }
+    .result-text { font-family: 'Luckiest Guy', cursive; font-size: 22px; margin: 20px 0; white-space: pre-line; }
+    
+    @media (max-width: 400px) {
+        .board { grid-template-columns: repeat(3, 85px); grid-template-rows: repeat(3, 85px); }
+        .cell { font-size: 2.8rem; }
+        .status { font-size: 22px; }
+        .btn { font-size: 14px; padding: 10px 20px; }
+    }
+</style>
+</head>
+<body>
+
+<nav>
+    <a href="index.html" class="nav-logo">🎪 TRES, SABLAY! <span>← Back to Home</span></a>
+</nav>
+
+<header class="hero-game">
+    <img src="images/logo.png" alt="Logo" class="game-logo">
+    <div class="subtitle">PERYAHAN NG TALINO</div>
+    <div class="hint">WAG MAKAKUHA NG 3 IN A ROW!</div>
+    
+    <div class="status" id="status">X'S TURNO! INGAT!</div>
+    
+    <div class="board" id="board"></div>
+    
+    <div>
+        <button class="btn btn-primary" onclick="restart()">★ ULIT / PLAY AGAIN</button>
+        <a href="index.html" class="btn btn-secondary">🏠 Home</a>
+    </div>
+</header>
+
+<!-- Trivia Popup -->
+<div id="trivia-popup" class="popup-overlay" style="display: none;">
+    <div class="popup">
+        <h2>★ SABLAY CHALLENGE! ★</h2>
+        <p id="trivia-loser" style="color: #e6372f; font-weight: 800;"></p>
+        <p id="trivia-instruction"></p>
+        <div class="question-box">
+            <p id="trivia-question"></p>
+        </div>
+        <div id="trivia-answers"></div>
+        <p id="trivia-result" class="result-text" style="display: none;"></p>
+        <button id="trivia-close" class="btn btn-primary" style="display: none;" onclick="closeTrivia()">★ ISARA / CLOSE ★</button>
+    </div>
+</div>
+
+<script>
+    let board = Array(9).fill(null);
+    let currentTurn = 'X';
+    let gameOver = false;
+    let cells = [];
+
+    const WIN_COMBOS = [
+        [0,1,2],[3,4,5],[6,7,8],
+        [0,3,6],[1,4,7],[2,5,8],
+        [0,4,8],[2,4,6]
+    ];
+
+    const QUESTIONS = [
+        { q: "Ano ang kabisera ng Pilipinas?\n(What is the capital of the Philippines?)", opts: ["Cebu City", "Manila", "Davao City"], correct: "Manila" },
+        { q: "Ilang isla mayroon ang Pilipinas?\n(How many islands does the Philippines have?)", opts: ["7,641", "7,107", "8,000"], correct: "7,641" },
+        { q: "Ano ang pambansang bulaklak ng Pilipinas?\n(What is the national flower?)", opts: ["Rose", "Sampaguita", "Orchid"], correct: "Sampaguita" },
+        { q: "Ano ang pambansang ibon ng Pilipinas?\n(What is the national bird?)", opts: ["Philippine Eagle", "Maya", "Kingfisher"], correct: "Philippine Eagle" },
+        { q: "Sino ang Pambansang Bayani ng Pilipinas?\n(Who is the National Hero?)", opts: ["Andres Bonifacio", "Jose Rizal", "Emilio Aguinaldo"], correct: "Jose Rizal" },
+        { q: "Ano ang pambansang prutas ng Pilipinas?\n(What is the national fruit?)", opts: ["Mango", "Banana", "Pineapple"], correct: "Mango" },
+        { q: "Ano ang pinakamalaking isla sa Pilipinas?\n(What is the largest island?)", opts: ["Mindanao", "Luzon", "Palawan"], correct: "Luzon" },
+        { q: "Anong lutuing Pilipino ang may suka at toyo?\n(What Filipino dish uses vinegar and soy sauce?)", opts: ["Sinigang", "Adobo", "Kare-Kare"], correct: "Adobo" },
+        { q: "Ano ang tawag sa tradisyonal na sasakyan?\n(What is the traditional colorful vehicle?)", opts: ["Jeepney", "Tricycle", "Pedicab"], correct: "Jeepney" },
+        { q: "Anong festival sa Cebu kada Enero?\n(What festival in Cebu every January?)", opts: ["Sinulog", "Dinagyang", "Panagbenga"], correct: "Sinulog" },
+    ];
+
+    function checkWin(player) {
+        return WIN_COMBOS.some(combo => combo.every(i => board[i] === player));
+    }
+
+    function restart() {
+        board = Array(9).fill(null);
+        gameOver = false;
+        currentTurn = Math.random() < 0.5 ? 'X' : 'O';
+        renderBoard();
+        updateStatus();
+    }
+
+    function renderBoard() {
+        const boardEl = document.getElementById('board');
+        boardEl.innerHTML = '';
+        cells = [];
+        for (let i = 0; i < 9; i++) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            if (board[i]) {
+                cell.classList.add(board[i].toLowerCase(), 'taken');
+                cell.textContent = board[i];
+            }
+            cell.onclick = () => handleCellClick(i);
+            boardEl.appendChild(cell);
+            cells.push(cell);
+        }
+    }
+
+    function handleCellClick(i) {
+        if (board[i] || gameOver) return;
+        board[i] = currentTurn;
+        cells[i].textContent = currentTurn;
+        cells[i].classList.add(currentTurn.toLowerCase(), 'taken');
+
+        if (checkWin(currentTurn)) {
+            gameOver = true;
+            const loser = currentTurn;
+            const rival = loser === 'X' ? 'O' : 'X';
+            document.getElementById('status').textContent = `${loser} GOT THREE! ${rival} ANSWERS!`;
+            setTimeout(() => showTrivia(loser, rival), 500);
+        } else if (board.every(c => c !== null)) {
+            gameOver = true;
+            document.getElementById('status').textContent = "★ TABLA! IT'S A DRAW! ★";
+        } else {
+            currentTurn = currentTurn === 'X' ? 'O' : 'X';
+            updateStatus();
+        }
+    }
+
+    function updateStatus() {
+        document.getElementById('status').textContent = `${currentTurn}'S TURNO! INGAT!`;
+    }
+
+    function showTrivia(loser, rival) {
+        const question = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
+        document.getElementById('trivia-loser').textContent = `${loser} GOT THREE IN A ROW!`;
+        document.getElementById('trivia-instruction').textContent = `${rival} must answer to decide ${loser}'s fate:`;
+        document.getElementById('trivia-question').textContent = question.q;
+
+        const answersDiv = document.getElementById('trivia-answers');
+        answersDiv.innerHTML = '';
+        question.opts.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.className = 'answer-btn';
+            btn.textContent = opt;
+            btn.onclick = () => handleAnswer(opt, question.correct, loser, rival, btn, answersDiv);
+            answersDiv.appendChild(btn);
+        });
+
+        document.getElementById('trivia-result').style.display = 'none';
+        document.getElementById('trivia-close').style.display = 'none';
+        document.getElementById('trivia-popup').style.display = 'flex';
+    }
+
+    function handleAnswer(selected, correct, loser, rival, clickedBtn, answersDiv) {
+        const buttons = answersDiv.querySelectorAll('.answer-btn');
+        buttons.forEach(btn => {
+            btn.disabled = true;
+            if (btn.textContent === correct) btn.classList.add('correct');
+            if (btn === clickedBtn && selected !== correct) btn.classList.add('wrong');
+        });
+
+        const resultEl = document.getElementById('trivia-result');
+        resultEl.style.display = 'block';
+
+        if (selected === correct) {
+            resultEl.textContent = `✔ TAMANG SAGOT!\n${rival} wins — ${loser} SABLAY!`;
+            resultEl.style.color = '#ffd43b';
+            document.getElementById('status').textContent = `★ ${rival} PANALO! ★`;
+        } else {
+            resultEl.textContent = `✘ MALI! The answer was "${correct}".\n${loser} wins — ${rival} SABLAY!`;
+            resultEl.style.color = '#e6372f';
+            document.getElementById('status').textContent = `★ ${loser} PANALO! ★`;
+        }
+
+        document.getElementById('trivia-close').style.display = 'inline-block';
+    }
+
+    function closeTrivia() {
+        document.getElementById('trivia-popup').style.display = 'none';
+    }
+
+    // Initialize game on load
+    restart();
+</script>
+
+</body>
+</html>
