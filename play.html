@@ -177,7 +177,7 @@
 
 <script>
     // ==========================================
-    // SOUND ENGINE (Web Audio API for Beeps)
+    // SOUND ENGINE (Web Audio API)
     // ==========================================
     let audioCtx = null;
     function getAudioCtx() {
@@ -187,7 +187,7 @@
         return audioCtx;
     }
 
-    function playBeep(frequency, duration) {
+    function playBeep(frequency, duration, type = 'square', volume = 0.2) {
         const ctx = getAudioCtx();
         const oscillator = ctx.createOscillator();
         const gainNode = ctx.createGain();
@@ -195,10 +195,10 @@
         oscillator.connect(gainNode);
         gainNode.connect(ctx.destination);
 
-        oscillator.type = 'sine';
+        oscillator.type = type; // 'square' sounds like a retro arcade game
         oscillator.frequency.value = frequency;
 
-        gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+        gainNode.gain.setValueAtTime(volume, ctx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration / 1000);
 
         oscillator.start(ctx.currentTime);
@@ -207,33 +207,42 @@
 
     function playSound(name) {
         if (name === 'click') {
-            playBeep(1200, 50);
+            // Standard UI click
+            playBeep(1200, 100, 'square', 0.15);
+        } else if (name === 'place_x') {
+            // High pitched blip for X
+            playBeep(800, 150, 'square', 0.2);
+        } else if (name === 'place_o') {
+            // Lower pitched blop for O
+            playBeep(500, 150, 'square', 0.2);
         } else if (name === 'lose') {
-            playBeep(400, 150);
-            setTimeout(() => playBeep(350, 150), 150);
-            setTimeout(() => playBeep(300, 300), 300);
+            // Descending sad tone
+            playBeep(400, 150, 'sawtooth', 0.2);
+            setTimeout(() => playBeep(350, 150, 'sawtooth', 0.2), 150);
+            setTimeout(() => playBeep(300, 300, 'sawtooth', 0.2), 300);
         } else if (name === 'win') {
-            playBeep(523, 150);
-            setTimeout(() => playBeep(659, 150), 150);
-            setTimeout(() => playBeep(784, 200), 300);
+            // Ascending victory tone
+            playBeep(523, 150, 'square', 0.2);
+            setTimeout(() => playBeep(659, 150, 'square', 0.2), 150);
+            setTimeout(() => playBeep(784, 200, 'square', 0.2), 300);
         }
     }
 
     // ==========================================
-    // MUSIC CONTROLLER (FIXED LOGIC)
+    // MUSIC CONTROLLER
     // ==========================================
     const bgMusic = document.getElementById('bg-music');
-    let musicOn = false; // Starts muted
+    let musicOn = false;
 
     function setMusic(on) {
         const btn = document.getElementById('music-toggle');
         if (on) {
             bgMusic.play().catch(e => console.log("Music play blocked"));
-            btn.textContent = "🔊"; // Show playing icon
+            btn.textContent = "🔊";
             musicOn = true;
         } else {
             bgMusic.pause();
-            btn.textContent = "🔇"; // Show muted icon
+            btn.textContent = "🔇";
             musicOn = false;
         }
     }
@@ -297,7 +306,7 @@
 
     function startGame() {
         playSound('click');
-        if (!musicOn) setMusic(true); // Auto-start music on first interaction
+        if (!musicOn) setMusic(true);
         showScreen('game-screen');
         restart();
     }
@@ -336,7 +345,13 @@
     function handleCellClick(i) {
         if (board[i] || gameOver) return;
         
-        playSound('click');
+        // Play distinct sound based on whose turn it is
+        if (currentTurn === 'X') {
+            playSound('place_x');
+        } else {
+            playSound('place_o');
+        }
+
         board[i] = currentTurn;
         cells[i].textContent = currentTurn;
         cells[i].classList.add(currentTurn.toLowerCase(), 'taken');
