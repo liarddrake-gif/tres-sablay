@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>TRES, SABLAY! | Peryahan ng Talino</title>
+
+<meta name="description"
+content="TRES, SABLAY! — Peryahan ng Talino. A Filipino-themed strategy and trivia game created by BSIT 1A students of Saint Francis Xavier College.">
+
+<!-- Google Fonts for Carnival Aesthetic -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Luckiest+Guy&family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+/* =========================================================
+   RESET & BASE
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: 'Poppins', Arial, Helvetica, sans-serif;
+    background: #070d2d;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* =========================================================
+   CARNIVAL TOP BORDER
+========================================================= */
+
+body::before {
+    content: "";
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    background: repeating-linear-gradient(
+        90deg,
+        #e6372f 0px,
+        #e6372f 90px,
+        #fff2c7 90px,
+        #fff2c7 180px
+    );
+    z-index: 9999;
+}
+
+/* =========================================================
+   NAVIGATION
+========================================================= */
+
+nav {
+    position: fixed;
+    top: 10px;
+    left: 0;
+    width: 100%;
+    padding: 15px 7%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(5, 10, 38, 0.85);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255,255,255,0.15);
+    z-index: 1000;
+}
+
+.nav-logo {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: 24px;
+    color: #ffd43b;
+    text-shadow: 2px 2px 0 #d92323, 0 0 15px rgba(255,212,59,.4);
+    letter-spacing: 1px;
+}
+
+nav ul {
+    display: flex;
+    list-style: none;
+    gap: 28px;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 15px;
+    transition: .3s;
+    position: relative;
+}
+
+nav a::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #ffd43b;
+    transition: width .3s;
+}
+
+nav a:hover::after, nav a.active::after {
+    width: 100%;
+}
+
+nav a:hover {
+    color: #ffd43b;
+}
+
+.hamburger {
+    display: none;
+    font-size: 28px;
+    cursor: pointer;
+    color: #ffd43b;
+    z-index: 1001;
+}
+
+/* =========================================================
+   HERO
+========================================================= */
+
+.hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    position: relative;
+    padding: 120px 20px 80px;
+    overflow: hidden;
+}
+
+.hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(rgba(5,10,45,.35), rgba(5,10,45,.88)), url("images/screenshot2.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    filter: blur(3px);
+    transform: scale(1.06);
+    z-index: -2;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, transparent 15%, rgba(0,0,0,.6) 100%);
+    z-index: -1;
+}
+
+.hero-content {
+    width: 100%;
+    max-width: 900px;
+    animation: heroAppear 1.2s ease;
+}
+
+.hero-logo {
+    width: min(470px, 85vw);
+    display: block;
+    margin: 0 auto 20px;
+    filter: drop-shadow(0 0 12px rgba(255,210,50,.75)) drop-shadow(0 15px 25px rgba(0,0,0,.65));
+    animation: logoFloat 4s ease-in-out infinite;
+}
+
+.subtitle {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: clamp(21px, 4vw, 34px);
+    color: #ffd43b;
+    text-transform: uppercase;
+    letter-spacing: 3px;
+    text-shadow: 3px 3px 0 #b91d1d, 0 0 15px rgba(255,212,59,.35);
+}
+
+.slogan {
+    margin-top: 14px;
+    font-size: clamp(16px, 3vw, 22px);
+    font-weight: 700;
+    color: #fff;
+    font-style: italic;
+}
+
+.hero-buttons {
+    margin-top: 35px;
+    display: flex;
+    justify-content: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.btn {
+    display: inline-block;
+    padding: 15px 30px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-weight: 800;
+    font-size: 16px;
+    transition: .2s;
+    cursor: pointer;
+    border: 2px solid;
+}
+
+.btn-primary {
+    background: #e6372f;
+    color: white;
+    border-color: #ffd43b;
+    box-shadow: 0 6px 0 #9e1714, 0 0 20px rgba(230,55,47,.25);
+}
+
+.btn-secondary {
+    background: #fff2c7;
+    color: #10265e;
+    border-color: #ffd43b;
+    box-shadow: 0 6px 0 #b89c4a;
+}
+
+.btn:hover {
+    transform: translateY(-3px);
+    filter: brightness(1.1);
+}
+
+.btn:active {
+    transform: translateY(3px);
+    box-shadow: 0 2px 0 #9e1714;
+}
+
+/* =========================================================
+   SECTIONS
+========================================================= */
+
+section {
+    padding: 95px 8%;
+}
+
+.section-title {
+    text-align: center;
+    margin-bottom: 50px;
+}
+
+.section-title h2 {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: clamp(30px,5vw,46px);
+    color: #ffd43b;
+    text-shadow: 3px 3px 0 #a81717;
+    letter-spacing: 1px;
+}
+
+.section-title p {
+    margin-top: 12px;
+    color: #d9e0ff;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+/* =========================================================
+   CARDS
+========================================================= */
+
+.cards {
+    max-width: 1150px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 25px;
+}
+
+.card {
+    background: linear-gradient(145deg, rgba(24,52,108,.95), rgba(10,25,65,.95));
+    border: 2px solid rgba(255, 212, 59, 0.3);
+    border-radius: 18px;
+    padding: 35px 30px;
+    box-shadow: 0 18px 40px rgba(0,0,0,.35);
+    transition: .35s;
+    position: relative;
+    overflow: hidden;
+}
+
+.card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 5px;
+    background: linear-gradient(90deg, #e6372f, #ffd43b);
+}
+
+.card:hover {
+    transform: translateY(-8px);
+    border-color: #ffd43b;
+    box-shadow: 0 25px 50px rgba(0,0,0,.45);
+}
+
+.card h3 {
+    font-family: 'Luckiest Guy', cursive;
+    color: #ffd43b;
+    margin-bottom: 15px;
+    font-size: 22px;
+    letter-spacing: 1px;
+}
+
+.card p {
+    line-height: 1.75;
+    color: #e8ecff;
+    font-size: 15px;
+}
+
+.icon {
+    font-size: 45px;
+    margin-bottom: 15px;
+    display: inline-block;
+}
+
+/* =========================================================
+   HOW TO PLAY
+========================================================= */
+
+.how-to {
+    background: linear-gradient(180deg, #09133b, #0d1b4b);
+}
+
+/* =========================================================
+   SCREENSHOTS
+========================================================= */
+
+.screenshots {
+    background: radial-gradient(circle at top, #152b6a, #060c2d);
+}
+
+.gallery {
+    max-width: 1250px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 25px;
+}
+
+.gallery-item {
+    overflow: hidden;
+    border-radius: 16px;
+    border: 3px solid #ffd43b;
+    background: #08133b;
+    box-shadow: 0 20px 40px rgba(0,0,0,.5);
+    transition: .4s;
+}
+
+.gallery-item:hover {
+    transform: translateY(-10px) scale(1.02);
+}
+
+.gallery-item img {
+    width: 100%;
+    display: block;
+    height: auto;
+    transition: transform .5s;
+}
+
+.gallery-item:hover img {
+    transform: scale(1.1);
+}
+
+.gallery-caption {
+    padding: 16px;
+    text-align: center;
+    font-weight: 800;
+    color: #ffd43b;
+    background: rgba(0,0,0,0.2);
+}
+
+/* =========================================================
+   FILIPINO THEME
+========================================================= */
+
+.filipino {
+    background: linear-gradient(135deg, #081548, #102a68, #58151d);
+}
+
+.filipino-content {
+    max-width: 950px;
+    margin: auto;
+    text-align: center;
+    background: rgba(0,0,0,0.2);
+    padding: 50px;
+    border-radius: 20px;
+    border: 2px solid rgba(255,212,59,0.3);
+}
+
+.flag {
+    font-size: 55px;
+    margin-bottom: 25px;
+}
+
+.filipino-content p {
+    font-size: 18px;
+    line-height: 1.9;
+    color: #e8ecff;
+}
+
+/* =========================================================
+   DEVELOPERS
+========================================================= */
+
+.developers {
+    background: #071033;
+}
+
+.developer-grid {
+    max-width: 1150px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(5,1fr);
+    gap: 16px;
+}
+
+.developer {
+    text-align: center;
+    padding: 25px 12px;
+    background: linear-gradient(145deg, #19366d, #0c2050);
+    border: 2px solid transparent;
+    border-radius: 15px;
+    transition: .3s;
+}
+
+.developer:hover {
+    transform: translateY(-7px);
+    border-color: #ffd43b;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+}
+
+.developer-avatar {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e6372f;
+    border: 3px solid #ffd43b;
+    font-size: 30px;
+}
+
+.developer h3 {
+    font-size: 15px;
+    line-height: 1.45;
+    color: #fff;
+}
+
+.school-info {
+    max-width: 800px;
+    margin: 45px auto 0;
+    text-align: center;
+    padding: 32px;
+    border: 2px solid #ffd43b;
+    border-radius: 17px;
+    background: rgba(16,40,85,.8);
+    box-shadow: 0 15px 35px rgba(0,0,0,.3);
+}
+
+.school-info h3 {
+    font-family: 'Luckiest Guy', cursive;
+    color: #ffd43b;
+    font-size: 25px;
+    margin-bottom: 15px;
+}
+
+.school-info p {
+    margin: 8px;
+    color: #e5eaff;
+}
+
+/* =========================================================
+   DOWNLOAD & QR CODE
+========================================================= */
+
+.download {
+    text-align: center;
+    background: radial-gradient(circle at center, #642029, #111947 65%, #060b29);
+}
+
+.download-box {
+    max-width: 780px;
+    margin: auto;
+    padding: 60px 30px;
+    border: 3px solid #ffd43b;
+    border-radius: 25px;
+    background: rgba(4,13,43,.8);
+    box-shadow: 0 25px 60px rgba(0,0,0,.5);
+}
+
+.download-box h2 {
+    font-family: 'Luckiest Guy', cursive;
+    font-size: clamp(29px,5vw,42px);
+    color: #ffd43b;
+    margin-bottom: 17px;
+}
+
+.download-box p {
+    line-height: 1.7;
+    margin-bottom: 30px;
+    color: #e3e8ff;
+}
+
+.download-btn {
+    font-size: 18px;
+    padding: 18px 35px;
+}
+
+.qr-code-section {
+    margin-top: 40px;
+    padding-top: 30px;
+    border-top: 1px dashed rgba(255,255,255,0.2);
+}
+
+.qr-code-section p {
+    margin-bottom: 15px;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: #ffd43b;
+}
+
+.qr-code-img {
+    width: 150px;
+    height: 150px;
+    border: 5px solid white;
+    border-radius: 10px;
+    padding: 5px;
+    background: white;
+    display: inline-block;
+}
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+footer {
+    text-align: center;
+    padding: 40px 20px;
+    background: #040820;
+    border-top: 2px solid #ffd43b;
+}
+
+footer h3 {
+    font-family: 'Luckiest Guy', cursive;
+    color: #ffd43b;
+    margin-bottom: 10px;
+}
+
+footer p {
+    color: #aeb9dc;
+    font-size: 14px;
+    margin-top: 6px;
+}
+
+/* =========================================================
+   ANIMATIONS
+========================================================= */
+
+@keyframes heroAppear {
+    from { opacity: 0; transform: translateY(40px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes logoFloat {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-15px); }
+}
+
+/* =========================================================
+   MOBILE RESPONSIVE
+========================================================= */
+
+@media (max-width: 900px) {
+    .hamburger {
+        display: block;
+    }
+
+    nav ul {
+        position: fixed;
+        top: 0;
+        right: -100%;
+        height: 100vh;
+        width: 60%;
+        background: rgba(5, 10, 38, 0.98);
+        backdrop-filter: blur(15px);
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 40px;
+        transition: right 0.4s ease-in-out;
+        border-left: 2px solid #ffd43b;
+    }
+
+    nav ul.active {
+        right: 0;
+    }
+
+    nav a {
+        font-size: 20px;
+    }
+
+    .cards, .gallery {
+        grid-template-columns: 1fr;
+    }
+
+    .developer-grid {
+        grid-template-columns: repeat(2,1fr);
+    }
+
+    section {
+        padding: 75px 5%;
+    }
+
+    .hero::before {
+        background-attachment: scroll; /* Fixed attachment causes issues on mobile */
+    }
+}
+
+@media (max-width: 500px) {
+    .developer-grid {
+        grid-template-columns: 1fr;
+    }
+    .hero {
+        padding-top: 110px;
+    }
+    .hero-logo {
+        width: 90%;
+    }
+    .subtitle {
+        letter-spacing: 1px;
+    }
+    .download-box {
+        padding: 45px 20px;
+    }
+}
+</style>
+</head>
+<body>
+
+<!-- =====================================================
+     NAVIGATION
+===================================================== -->
+<nav>
+    <div class="nav-logo">🎪 TRES, SABLAY!</div>
+    <div class="hamburger" id="hamburger">☰</div>
+    <ul id="nav-menu">
+        <li><a href="#about">About</a></li>
+        <li><a href="#screenshots">Screenshots</a></li>
+        <li><a href="#theme">Filipino Theme</a></li>
+        <li><a href="#developers">Developers</a></li>
+        <li><a href="#download">Download</a></li>
+    </ul>
+</nav>
+
+<!-- =====================================================
+     HERO
+===================================================== -->
+<header class="hero">
+    <div class="hero-content">
+        <img src="images/logo.png" alt="TRES, SABLAY! Logo" class="hero-logo">
+        <div class="subtitle">PERYAHAN NG TALINO</div>
+        <p class="slogan">“Mag-Tres Ka… Baka Talo Ka!”</p>
+        <div class="hero-buttons">
+            <a href="#about" class="btn btn-primary">🎮 EXPLORE THE GAME</a>
+            <a href="#download" class="btn btn-secondary">⬇ DOWNLOAD GAME</a>
+        </div>
+    </div>
+</header>
+
+<!-- =====================================================
+     ABOUT THE GAME
+===================================================== -->
+<section id="about">
+    <div class="section-title">
+        <h2>🎪 Welcome to TRES, SABLAY!</h2>
+        <p>Peryahan ng Talino</p>
+    </div>
+    <div class="cards">
+        <div class="card">
+            <div class="icon">🎮</div>
+            <h3>Game Description</h3>
+            <p>TRES, SABLAY! is a Filipino-themed trivia and strategy game inspired by the lively atmosphere of a traditional Filipino peryahan. Players compete in a reverse Tic-Tac-Toe challenge where getting three symbols in a row can lead to a surprising twist.</p>
+        </div>
+        <div class="card">
+            <div class="icon">🧠</div>
+            <h3>Game Concept</h3>
+            <p>The game combines strategy, quick thinking, and Filipino trivia. Players take turns placing their symbols while carefully avoiding three in a row. When a player completes three, the opposing player faces a trivia challenge that can determine the outcome of the game.</p>
+        </div>
+        <div class="card">
+            <div class="icon">🎪</div>
+            <h3>Peryahan ng Talino</h3>
+            <p>The colorful carnival design represents the excitement of Filipino peryahan — complete with bright lights, carnival rides, games, and festive entertainment. Here, knowledge and strategy become the ultimate attractions.</p>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================
+     HOW TO PLAY
+===================================================== -->
+<section class="how-to">
+    <div class="section-title">
+        <h2>🎯 How To Play</h2>
+        <p>Simple rules. Big surprises.</p>
+    </div>
+    <div class="cards">
+        <div class="card">
+            <div class="icon">1️⃣</div>
+            <h3>Take Your Turn</h3>
+            <p>Players take turns placing their X or O on the game board.</p>
+        </div>
+        <div class="card">
+            <div class="icon">2️⃣</div>
+            <h3>Avoid Three!</h3>
+            <p>Be careful! Completing three symbols in a row triggers the game's special trivia challenge.</p>
+        </div>
+        <div class="card">
+            <div class="icon">3️⃣</div>
+            <h3>Face the Trivia</h3>
+            <p>The opposing player answers a Filipino trivia question to determine the final result.</p>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================
+     SCREENSHOTS
+===================================================== -->
+<section id="screenshots" class="screenshots">
+    <div class="section-title">
+        <h2>📸 Game Screenshots</h2>
+        <p>Take a look inside the TRES, SABLAY! experience.</p>
+    </div>
+    <div class="gallery">
+        <div class="gallery-item">
+            <img src="images/screenshot1.png" alt="TRES, SABLAY loading screen">
+            <div class="gallery-caption">🎪 Loading Screen</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/screenshot2.png" alt="TRES, SABLAY main menu">
+            <div class="gallery-caption">⭐ Main Menu</div>
+        </div>
+        <div class="gallery-item">
+            <img src="images/screenshot3.png" alt="TRES, SABLAY gameplay and trivia">
+            <div class="gallery-caption">🎮 Gameplay & Trivia</div>
+        </div>
+    </div>
+</section>
+
+<!-- =====================================================
+     FILIPINO THEME
+===================================================== -->
+<section id="theme" class="filipino">
+    <div class="section-title">
+        <h2>🇵🇭 Filipino Theme</h2>
+        <p>Inspired by the fun and excitement of the Filipino peryahan.</p>
+    </div>
+    <div class="filipino-content">
+        <div class="flag">🇵🇭 🎪 🎡 🎆</div>
+        <p>
+            TRES, SABLAY! embraces Filipino culture through its colorful peryahan-inspired environment, Filipino language, local trivia, festive lights, carnival rides, and playful atmosphere.
+            <br><br>
+            The game transforms the familiar Filipino peryahan experience into an interactive challenge where strategy, knowledge, and quick thinking come together.
+        </p>
+    </div>
+</section>
+
+<!-- =====================================================
+     DEVELOPERS
+===================================================== -->
+<section id="developers" class="developers">
+    <div class="section-title">
+        <h2>👨‍💻 Game Developers</h2>
+        <p>Created by BSIT 1A students</p>
+    </div>
+    <div class="developer-grid">
+        <div class="developer">
+            <div class="developer-avatar">👨‍💻</div>
+            <h3>Marmito,<br>Deric Lloyd A.</h3>
+        </div>
+        <div class="developer">
+            <div class="developer-avatar">👨‍💻</div>
+            <h3>Ayson,<br>Charles</h3>
+        </div>
+        <div class="developer">
+            <div class="developer-avatar">👩‍💻</div>
+            <h3>Moncano,<br>Aliyah M.</h3>
+        </div>
+        <div class="developer">
+            <div class="developer-avatar">👨‍💻</div>
+            <h3>Medenilla,<br>Mark</h3>
+        </div>
+        <div class="developer">
+            <div class="developer-avatar">👩‍💻</div>
+            <h3>Mamac,<br>Ashley A.</h3>
+        </div>
+    </div>
+
+    <div class="school-info">
+        <h3>🎓 Academic Information</h3>
+        <p><strong>Course:</strong> Bachelor of Science in Information Technology</p>
+        <p><strong>Section:</strong> 1A</p>
+        <p><strong>School:</strong> Saint Francis Xavier College</p>
+    </div>
+</section>
+
+<!-- =====================================================
+     DOWNLOAD
+===================================================== -->
+<section id="download" class="download">
+    <div class="download-box">
+        <h2>🎮 Ready to Play?</h2>
+        <p>Step inside the Peryahan ng Talino and test your strategy and Filipino trivia knowledge!</p>
+        
+        <a href="https://github.com/liarddrake-gif/tres-sablay/releases/download/v1.0/TRES_SABLAY.zip"
+   class="btn btn-primary download-btn">
+    ⬇ DOWNLOAD TRES, SABLAY!
+        </a>
+        
+        <!-- QR CODE SECTION -->
+        <div class="qr-code-section">
+            <p>Prefer to scan with your phone?</p>
+            <!-- Replace this with your actual QR code image -->
+            <img src="images/qr-code-placeholder.png" alt="QR Code to Download Game" class="qr-code-img">
+        </div>
+
+        <p style="margin-top:20px; margin-bottom:0; font-size:13px; color:#aeb9dc;">
+            Windows PC • Python/Tkinter Game
+        </p>
+    </div>
+</section>
+
+<!-- =====================================================
+     FOOTER
+===================================================== -->
+<footer>
+    <h3>🎪 TRES, SABLAY! — Peryahan ng Talino</h3>
+    <p>A Filipino-Themed Python Game</p>
+    <p>Bachelor of Science in Information Technology — Section 1A</p>
+    <p>Saint Francis Xavier College</p>
+    <p style="margin-top:15px;">© 2024 TRES, SABLAY! Team</p>
+</footer>
+
+<!-- =====================================================
+     JAVASCRIPT FOR MOBILE MENU
+===================================================== -->
+<script>
+    const hamburger = document.getElementById('hamburger');
+    const navMenu = document.getElementById('nav-menu');
+
+    hamburger.addEventListener('click', () => {
+        navMenu.classList.toggle('active');
+        // Change icon based on menu state
+        if (navMenu.classList.contains('active')) {
+            hamburger.textContent = '✖';
+        } else {
+            hamburger.textContent = '☰';
+        }
+    });
+
+    // Close menu when a link is clicked
+    document.querySelectorAll('#nav-menu a').forEach(link => {
+        link.addEventListener('click', () => {
+            navMenu.classList.remove('active');
+            hamburger.textContent = '☰';
+        });
+    });
+</script>
+
+</body>
+</html>
