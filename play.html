@@ -16,8 +16,20 @@
     .nav-logo { font-family: 'Luckiest Guy', cursive; font-size: 24px; color: #ffd43b; text-shadow: 2px 2px 0 #d92323; text-decoration: none; }
     .nav-logo span { color: #fff; text-decoration: none; margin-left: 15px; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; opacity: 0.8; }
 
+    /* Music Toggle Button */
+    #music-toggle { 
+        position: fixed; top: 20px; right: 20px; z-index: 1001; 
+        background: rgba(255, 212, 59, 0.9); border: 2px solid #e6372f; 
+        border-radius: 50%; width: 45px; height: 45px; font-size: 20px; 
+        cursor: pointer; color: #050a1f; box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        display: flex; align-items: center; justify-content: center;
+        transition: transform 0.2s;
+    }
+    #music-toggle:active { transform: scale(0.9); }
+
     /* Background GIF Layer */
-    .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(rgba(5, 10, 31, 0.4), rgba(5, 10, 31, 0.8)), url("images/Carnival_BG.gif"); background-size: cover; background-position: center; animation: slowZoom 20s ease-in-out infinite alternate; }
+    #bg-gif { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; object-fit: cover; z-index: -2; animation: slowZoom 20s ease-in-out infinite alternate; }
+    #bg-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: linear-gradient(rgba(5, 10, 31, 0.5), rgba(5, 10, 31, 0.8)); z-index: -1; }
     @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
     /* Screen Manager */
@@ -32,18 +44,15 @@
     .hint { font-size: 14px; color: #e6372f; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; }
     .status { font-family: 'Luckiest Guy', cursive; font-size: 28px; color: #fff; margin: 15px 0; text-shadow: 2px 2px 0 #000; min-height: 40px; }
 
-    /* Loading Screen */
     .loading-text { font-family: 'Poppins', sans-serif; font-size: 18px; color: #ffd43b; font-weight: 600; margin-top: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
     .progress-bar-container { width: 250px; height: 25px; border: 2px solid #fff; border-radius: 15px; margin-top: 20px; overflow: hidden; background: rgba(0,0,0,0.5); }
     .progress-bar { height: 100%; width: 0%; background: #ffd43b; transition: width 0.1s linear; box-shadow: 0 0 15px #ffd43b; }
 
-    /* Buttons */
     .btn { display: inline-block; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 15px; transition: 0.2s; cursor: pointer; border: 2px solid; text-transform: uppercase; margin: 10px 5px; }
     .btn-primary { background: #e6372f; color: white; border-color: #ffd43b; box-shadow: 0 5px 0 #9e1714; }
     .btn-secondary { background: #fff2c7; color: #10265e; border-color: #ffd43b; box-shadow: 0 5px 0 #b89c4a; }
     .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #9e1714; }
 
-    /* Board */
     .board { display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); gap: 12px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 20px; border: 2px solid #ffd43b; box-shadow: 0 15px 40px rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
     .cell { background: rgba(21, 43, 106, 0.8); border: 2px solid #ffd43b; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-family: 'Luckiest Guy', cursive; font-size: 3.5rem; cursor: pointer; transition: all 0.2s; user-select: none; }
     .cell:hover:not(.taken) { background: rgba(29, 58, 133, 0.9); transform: scale(0.95); }
@@ -51,7 +60,6 @@
     .cell.o { color: #ffd43b; text-shadow: 0 0 15px rgba(255,212,59,0.8); }
     .cell.taken { cursor: not-allowed; }
 
-    /* Popups */
     .popup-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
     .popup-overlay.active { display: flex; }
     .popup { background: #050a1f; border: 4px solid #ffd43b; border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(255,212,59,0.3); max-height: 90vh; overflow-y: auto; }
@@ -88,8 +96,15 @@
 </head>
 <body>
 
+<!-- Hidden Audio Element for Music -->
+<audio id="bg-music" loop src="sounds/funny.mp3"></audio>
+
+<!-- Music Toggle Button -->
+<button id="music-toggle" onclick="toggleMusic()">🔊</button>
+
 <!-- Animated Carnival Background -->
-<div class="bg-layer"></div>
+<img src="images/Carnival_BG.gif" id="bg-gif" alt="Carnival Background">
+<div id="bg-overlay"></div>
 
 <nav>
     <a href="index.html" class="nav-logo">🎪 TRES, SABLAY! <span>← Back to Home</span></a>
@@ -161,13 +176,75 @@
 </div>
 
 <script>
-    // Screen Manager
+    // ==========================================
+    // SOUND ENGINE (Web Audio API for Beeps)
+    // ==========================================
+    let audioCtx = null;
+    function getAudioCtx() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        return audioCtx;
+    }
+
+    function playBeep(frequency, duration) {
+        const ctx = getAudioCtx();
+        const oscillator = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        oscillator.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        oscillator.type = 'sine';
+        oscillator.frequency.value = frequency;
+
+        gainNode.gain.setValueAtTime(0.15, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration / 1000);
+
+        oscillator.start(ctx.currentTime);
+        oscillator.stop(ctx.currentTime + duration / 1000);
+    }
+
+    function playSound(name) {
+        if (name === 'click') {
+            playBeep(1200, 50);
+        } else if (name === 'lose') {
+            playBeep(400, 150);
+            setTimeout(() => playBeep(350, 150), 150);
+            setTimeout(() => playBeep(300, 300), 300);
+        } else if (name === 'win') {
+            playBeep(523, 150);
+            setTimeout(() => playBeep(659, 150), 150);
+            setTimeout(() => playBeep(784, 200), 300);
+        }
+    }
+
+    // ==========================================
+    // MUSIC CONTROLLER
+    // ==========================================
+    const bgMusic = document.getElementById('bg-music');
+    let musicOn = false;
+
+    function toggleMusic() {
+        musicOn = !musicOn;
+        const btn = document.getElementById('music-toggle');
+        if (musicOn) {
+            bgMusic.play().catch(e => console.log("Music play blocked"));
+            btn.textContent = "🔇";
+        } else {
+            bgMusic.pause();
+            btn.textContent = "🔊";
+        }
+    }
+
+    // ==========================================
+    // SCREEN MANAGER
+    // ==========================================
     function showScreen(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
         document.getElementById(id).classList.add('active');
     }
 
-    // Loading Screen Logic
     function runLoading() {
         let width = 0;
         const interval = setInterval(() => {
@@ -181,11 +258,12 @@
         }, 40);
     }
 
-    // Mechanics Logic
-    function showMechanics() { document.getElementById('mechanics-popup').classList.add('active'); }
-    function closeMechanics() { document.getElementById('mechanics-popup').classList.remove('active'); }
+    function showMechanics() { playSound('click'); document.getElementById('mechanics-popup').classList.add('active'); }
+    function closeMechanics() { playSound('click'); document.getElementById('mechanics-popup').classList.remove('active'); }
 
-    // Game Logic
+    // ==========================================
+    // GAME LOGIC
+    // ==========================================
     let board = Array(9).fill(null);
     let currentTurn = 'X';
     let gameOver = false;
@@ -213,15 +291,19 @@
     function checkWin(player) { return WIN_COMBOS.some(combo => combo.every(i => board[i] === player)); }
 
     function startGame() {
+        playSound('click');
+        if (!musicOn) toggleMusic(); // Start music on first interaction
         showScreen('game-screen');
         restart();
     }
 
     function backToMenu() {
+        playSound('click');
         showScreen('menu-screen');
     }
 
     function restart() {
+        playSound('click');
         board = Array(9).fill(null);
         gameOver = false;
         currentTurn = Math.random() < 0.5 ? 'X' : 'O';
@@ -248,12 +330,15 @@
 
     function handleCellClick(i) {
         if (board[i] || gameOver) return;
+        
+        playSound('click');
         board[i] = currentTurn;
         cells[i].textContent = currentTurn;
         cells[i].classList.add(currentTurn.toLowerCase(), 'taken');
 
         if (checkWin(currentTurn)) {
             gameOver = true;
+            playSound('lose'); // Play lose sound when 3 in a row is hit
             const loser = currentTurn;
             const rival = loser === 'X' ? 'O' : 'X';
             document.getElementById('status').textContent = `NAKATLONG SI ${loser}! SASAGOT SI ${rival}!`;
@@ -293,6 +378,7 @@
     }
 
     function handleAnswer(selected, correct, loser, rival, clickedBtn, answersDiv) {
+        playSound('click');
         const buttons = answersDiv.querySelectorAll('.answer-btn');
         buttons.forEach(btn => {
             btn.disabled = true;
@@ -304,10 +390,12 @@
         resultEl.style.display = 'block';
 
         if (selected === correct) {
+            playSound('win'); // Play win sound for correct answer
             resultEl.textContent = `✔ TAMA!\nNanalo si ${rival} — Natalo si ${loser}!`;
             resultEl.style.color = '#ffd43b';
             document.getElementById('status').textContent = `★ NANALO SI ${rival}! ★`;
         } else {
+            playSound('lose'); // Play lose sound for wrong answer
             resultEl.textContent = `✘ MALI! Ang tamang sagot ay "${correct}".\nNanalo si ${loser} — Natalo si ${rival}!`;
             resultEl.style.color = '#e6372f';
             document.getElementById('status').textContent = `★ NANALO SI ${loser}! ★`;
@@ -317,6 +405,7 @@
     }
 
     function closeTrivia() {
+        playSound('click');
         document.getElementById('trivia-popup').classList.remove('active');
     }
 
