@@ -16,34 +16,59 @@
     .nav-logo { font-family: 'Luckiest Guy', cursive; font-size: 24px; color: #ffd43b; text-shadow: 2px 2px 0 #d92323; text-decoration: none; }
     .nav-logo span { color: #fff; text-decoration: none; margin-left: 15px; font-family: 'Poppins', sans-serif; font-size: 15px; font-weight: 700; opacity: 0.8; }
 
-    .hero-game { min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 100px 20px 50px; position: relative; overflow: hidden; }
-    .hero-game::before { content: ""; position: absolute; inset: 0; background: linear-gradient(rgba(5, 10, 31, 0.8), rgba(5, 10, 31, 0.95)), url("images/screenshot1.png"); background-size: cover; background-position: center; z-index: -1; animation: slowZoom 20s ease-in-out infinite alternate; }
+    /* Background GIF Layer */
+    .bg-layer { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; background: linear-gradient(rgba(5, 10, 31, 0.4), rgba(5, 10, 31, 0.8)), url("images/Carnival_BG.gif"); background-size: cover; background-position: center; animation: slowZoom 20s ease-in-out infinite alternate; }
     @keyframes slowZoom { 0% { transform: scale(1); } 100% { transform: scale(1.15); } }
 
+    /* Screen Manager */
+    .screen { display: none; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; text-align: center; padding: 100px 20px 50px; position: relative; }
+    .screen.active { display: flex; }
+
     .game-logo { width: 200px; margin-bottom: 15px; filter: drop-shadow(0 0 15px rgba(255, 210, 50, 0.8)); animation: logoFloat 4s ease-in-out infinite; }
+    .game-logo.small { width: 120px; margin-bottom: 5px; }
     @keyframes logoFloat { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
     .subtitle { font-family: 'Luckiest Guy', cursive; font-size: 24px; color: #ffd43b; text-shadow: 2px 2px 0 #b91d1d; margin-bottom: 5px; }
     .hint { font-size: 14px; color: #e6372f; font-weight: 700; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; }
     .status { font-family: 'Luckiest Guy', cursive; font-size: 28px; color: #fff; margin: 15px 0; text-shadow: 2px 2px 0 #000; min-height: 40px; }
 
-    .board { display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); gap: 12px; background: rgba(0,0,0,0.4); padding: 15px; border-radius: 20px; border: 2px solid #ffd43b; box-shadow: 0 15px 40px rgba(0,0,0,0.5); }
-    .cell { background: #152b6a; border: 2px solid #ffd43b; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-family: 'Luckiest Guy', cursive; font-size: 3.5rem; cursor: pointer; transition: all 0.2s; user-select: none; }
-    .cell:hover:not(.taken) { background: #1d3a85; transform: scale(0.95); }
+    /* Loading Screen */
+    .loading-text { font-family: 'Poppins', sans-serif; font-size: 18px; color: #ffd43b; font-weight: 600; margin-top: 20px; text-shadow: 0 2px 4px rgba(0,0,0,0.8); }
+    .progress-bar-container { width: 250px; height: 25px; border: 2px solid #fff; border-radius: 15px; margin-top: 20px; overflow: hidden; background: rgba(0,0,0,0.5); }
+    .progress-bar { height: 100%; width: 0%; background: #ffd43b; transition: width 0.1s linear; box-shadow: 0 0 15px #ffd43b; }
+
+    /* Buttons */
+    .btn { display: inline-block; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 15px; transition: 0.2s; cursor: pointer; border: 2px solid; text-transform: uppercase; margin: 10px 5px; }
+    .btn-primary { background: #e6372f; color: white; border-color: #ffd43b; box-shadow: 0 5px 0 #9e1714; }
+    .btn-secondary { background: #fff2c7; color: #10265e; border-color: #ffd43b; box-shadow: 0 5px 0 #b89c4a; }
+    .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #9e1714; }
+
+    /* Board */
+    .board { display: grid; grid-template-columns: repeat(3, 100px); grid-template-rows: repeat(3, 100px); gap: 12px; background: rgba(0,0,0,0.6); padding: 15px; border-radius: 20px; border: 2px solid #ffd43b; box-shadow: 0 15px 40px rgba(0,0,0,0.5); backdrop-filter: blur(2px); }
+    .cell { background: rgba(21, 43, 106, 0.8); border: 2px solid #ffd43b; border-radius: 15px; display: flex; justify-content: center; align-items: center; font-family: 'Luckiest Guy', cursive; font-size: 3.5rem; cursor: pointer; transition: all 0.2s; user-select: none; }
+    .cell:hover:not(.taken) { background: rgba(29, 58, 133, 0.9); transform: scale(0.95); }
     .cell.x { color: #e6372f; text-shadow: 0 0 15px rgba(230,55,47,0.8); }
     .cell.o { color: #ffd43b; text-shadow: 0 0 15px rgba(255,212,59,0.8); }
     .cell.taken { cursor: not-allowed; }
 
-    .btn { display: inline-block; padding: 12px 30px; border-radius: 10px; text-decoration: none; font-weight: 800; font-size: 15px; transition: 0.2s; cursor: pointer; border: 2px solid; text-transform: uppercase; margin-top: 20px; }
-    .btn-primary { background: #e6372f; color: white; border-color: #ffd43b; box-shadow: 0 5px 0 #9e1714; }
-    .btn-secondary { background: #fff2c7; color: #10265e; border-color: #ffd43b; box-shadow: 0 5px 0 #b89c4a; margin-left: 10px; }
-    .btn:active { transform: translateY(3px); box-shadow: 0 2px 0 #9e1714; }
+    /* Popups */
+    .popup-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: none; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
+    .popup-overlay.active { display: flex; }
+    .popup { background: #050a1f; border: 4px solid #ffd43b; border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(255,212,59,0.3); max-height: 90vh; overflow-y: auto; }
+    .popup h2 { font-family: 'Luckiest Guy', cursive; color: #ffd43b; font-size: 28px; margin-bottom: 10px; text-shadow: 2px 2px 0 #b91d1d; }
+    .popup-subtitle { color: #fff; font-size: 14px; font-style: italic; margin-bottom: 20px; }
+    .popup p { color: #fff; margin-bottom: 10px; font-size: 16px; line-height: 1.5; }
+    
+    .rules-list { list-style: none; text-align: left; margin-bottom: 20px; }
+    .rules-list li { padding: 8px 0; font-size: 15px; color: #e8ecff; padding-left: 25px; position: relative; }
+    .rules-list li::before { content: "●"; color: #ffd43b; position: absolute; left: 5px; }
+    
+    .divider { height: 2px; background: #ffd43b; margin: 20px 0; border-radius: 2px; }
+    .outcome { display: flex; align-items: center; justify-content: flex-start; text-align: left; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 10px; margin-bottom: 8px; font-size: 14px; }
+    .outcome span { font-size: 20px; margin-right: 10px; }
+    .outcome strong { color: #ffd43b; margin-left: 5px; }
+    .footer-text { font-size: 13px; color: #aeb9dc; margin: 15px 0; }
 
-    /* Trivia Popup */
-    .popup-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); display: flex; justify-content: center; align-items: center; z-index: 100; padding: 20px; }
-    .popup { background: #050a1f; border: 4px solid #ffd43b; border-radius: 20px; padding: 30px; max-width: 500px; width: 100%; text-align: center; box-shadow: 0 0 30px rgba(255,212,59,0.3); }
-    .popup h2 { font-family: 'Luckiest Guy', cursive; color: #ffd43b; font-size: 28px; margin-bottom: 15px; text-shadow: 2px 2px 0 #b91d1d; }
-    .popup p { color: #fff; margin-bottom: 10px; font-size: 16px; }
     .question-box { background: rgba(255,212,59,0.1); border: 2px solid #ffd43b; border-radius: 12px; padding: 20px; margin: 20px 0; }
     .question-box p { font-size: 18px; font-weight: 700; white-space: pre-line; color: #fff; }
     .answer-btn { display: block; width: 100%; padding: 15px; margin: 10px 0; font-size: 16px; font-weight: 700; background: #fff2c7; color: #050a1f; border: 2px solid #e6372f; border-radius: 10px; cursor: pointer; transition: 0.2s; }
@@ -63,29 +88,67 @@
 </head>
 <body>
 
+<!-- Animated Carnival Background -->
+<div class="bg-layer"></div>
+
 <nav>
     <a href="index.html" class="nav-logo">🎪 TRES, SABLAY! <span>← Back to Home</span></a>
 </nav>
 
-<header class="hero-game">
+<!-- 1. LOADING SCREEN -->
+<div id="loading-screen" class="screen active">
+    <img src="images/logo.png" alt="Logo" class="game-logo">
+    <div class="loading-text">Naglo-load ang karnibal...</div>
+    <div class="progress-bar-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+</div>
+
+<!-- 2. MENU SCREEN -->
+<div id="menu-screen" class="screen">
     <img src="images/logo.png" alt="Logo" class="game-logo">
     <div class="subtitle">PERYAHAN NG TALINO</div>
-    <div class="hint">WAG MAKAKUHA NG 3 IN A ROW!</div>
-    
-    <div class="status" id="status">X'S TURNO! INGAT!</div>
-    
-    <div class="board" id="board"></div>
-    
-    <div>
-        <button class="btn btn-primary" onclick="restart()">★ ULIT / PLAY AGAIN</button>
-        <a href="index.html" class="btn btn-secondary">🏠 Home</a>
-    </div>
-</header>
+    <div class="hint">PINOY EDITION</div>
+    <button class="btn btn-primary" onclick="startGame()">★ MAGSIMULA ★</button>
+    <button class="btn btn-secondary" onclick="showMechanics()">PAANO LARUIN</button>
+</div>
 
-<!-- Trivia Popup -->
-<div id="trivia-popup" class="popup-overlay" style="display: none;">
+<!-- 3. GAME SCREEN -->
+<div id="game-screen" class="screen">
+    <img src="images/logo.png" alt="Logo" class="game-logo small">
+    <div class="hint">HUWAG KUMUHA NG TATLONG SUNOD!</div>
+    <div class="status" id="status">TURNO NI X! INGAT!</div>
+    <div class="board" id="board"></div>
+    <div>
+        <button class="btn btn-primary" onclick="restart()">★ MAGLARO ULIT ★</button>
+        <button class="btn btn-secondary" onclick="backToMenu()">Bumalik</button>
+    </div>
+</div>
+
+<!-- MECHANICS POPUP -->
+<div id="mechanics-popup" class="popup-overlay">
     <div class="popup">
-        <h2>★ SABLAY CHALLENGE! ★</h2>
+        <h2>★ PAANO MAGLARO ★</h2>
+        <p class="popup-subtitle">Reverse Tic-Tac-Toe (Baligtad)</p>
+        <ul class="rules-list">
+            <li>Dalawang manlalaro ang maghahalinhinan: X at O.</li>
+            <li>Random ang unang manlalaro.</li>
+            <li>Ilagay ang simbolo mo sa anumang bakanteng espasyo.</li>
+            <li>LAYUNIN: Iwasan ang tatlong sunod-sunod!</li>
+        </ul>
+        <div class="divider"></div>
+        <h2 style="font-size: 20px; color: #e6372f;">★ KAPAG NAKATLONG SUNOD KA ★</h2>
+        <div class="outcome"><span>✔</span> Tama ang sagot ng kalaban <strong>→ TALO KA</strong></div>
+        <div class="outcome"><span>✘</span> Mali ang sagot ng kalaban <strong>→ PANALO KA</strong></div>
+        <p class="footer-text">Kung puno ang board at walang tatlong sunod, tablas.<br>Ang restart ay maglilinis ng board at random na pipili kung sino ang unang lalaro.</p>
+        <button class="btn btn-primary" onclick="closeMechanics()">★ NAIINTINDIHAN KO! ★</button>
+    </div>
+</div>
+
+<!-- TRIVIA POPUP -->
+<div id="trivia-popup" class="popup-overlay">
+    <div class="popup">
+        <h2>★ HULING HAMON! ★</h2>
         <p id="trivia-loser" style="color: #e6372f; font-weight: 800;"></p>
         <p id="trivia-instruction"></p>
         <div class="question-box">
@@ -93,11 +156,36 @@
         </div>
         <div id="trivia-answers"></div>
         <p id="trivia-result" class="result-text" style="display: none;"></p>
-        <button id="trivia-close" class="btn btn-primary" style="display: none;" onclick="closeTrivia()">★ ISARA / CLOSE ★</button>
+        <button id="trivia-close" class="btn btn-primary" style="display: none;" onclick="closeTrivia()">ISARA</button>
     </div>
 </div>
 
 <script>
+    // Screen Manager
+    function showScreen(id) {
+        document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+    }
+
+    // Loading Screen Logic
+    function runLoading() {
+        let width = 0;
+        const interval = setInterval(() => {
+            if (width >= 100) {
+                clearInterval(interval);
+                setTimeout(() => showScreen('menu-screen'), 500);
+            } else {
+                width += 2;
+                document.getElementById('progress-bar').style.width = width + '%';
+            }
+        }, 40);
+    }
+
+    // Mechanics Logic
+    function showMechanics() { document.getElementById('mechanics-popup').classList.add('active'); }
+    function closeMechanics() { document.getElementById('mechanics-popup').classList.remove('active'); }
+
+    // Game Logic
     let board = Array(9).fill(null);
     let currentTurn = 'X';
     let gameOver = false;
@@ -110,20 +198,27 @@
     ];
 
     const QUESTIONS = [
-        { q: "Ano ang kabisera ng Pilipinas?\n(What is the capital of the Philippines?)", opts: ["Cebu City", "Manila", "Davao City"], correct: "Manila" },
-        { q: "Ilang isla mayroon ang Pilipinas?\n(How many islands does the Philippines have?)", opts: ["7,641", "7,107", "8,000"], correct: "7,641" },
-        { q: "Ano ang pambansang bulaklak ng Pilipinas?\n(What is the national flower?)", opts: ["Rose", "Sampaguita", "Orchid"], correct: "Sampaguita" },
-        { q: "Ano ang pambansang ibon ng Pilipinas?\n(What is the national bird?)", opts: ["Philippine Eagle", "Maya", "Kingfisher"], correct: "Philippine Eagle" },
-        { q: "Sino ang Pambansang Bayani ng Pilipinas?\n(Who is the National Hero?)", opts: ["Andres Bonifacio", "Jose Rizal", "Emilio Aguinaldo"], correct: "Jose Rizal" },
-        { q: "Ano ang pambansang prutas ng Pilipinas?\n(What is the national fruit?)", opts: ["Mango", "Banana", "Pineapple"], correct: "Mango" },
-        { q: "Ano ang pinakamalaking isla sa Pilipinas?\n(What is the largest island?)", opts: ["Mindanao", "Luzon", "Palawan"], correct: "Luzon" },
-        { q: "Anong lutuing Pilipino ang may suka at toyo?\n(What Filipino dish uses vinegar and soy sauce?)", opts: ["Sinigang", "Adobo", "Kare-Kare"], correct: "Adobo" },
-        { q: "Ano ang tawag sa tradisyonal na sasakyan?\n(What is the traditional colorful vehicle?)", opts: ["Jeepney", "Tricycle", "Pedicab"], correct: "Jeepney" },
-        { q: "Anong festival sa Cebu kada Enero?\n(What festival in Cebu every January?)", opts: ["Sinulog", "Dinagyang", "Panagbenga"], correct: "Sinulog" },
+        { q: "Ano ang kapital ng Pilipinas?", opts: ["Cebu City", "Manila", "Davao City"], correct: "Manila" },
+        { q: "Ilang isla ang mayroon ang Pilipinas?", opts: ["7,641", "7,107", "8,000"], correct: "7,641" },
+        { q: "Ano ang pambansang bulaklak ng Pilipinas?", opts: ["Rose", "Sampaguita", "Orchid"], correct: "Sampaguita" },
+        { q: "Ano ang pambansang ibon ng Pilipinas?", opts: ["Philippine Eagle", "Maya", "Kingfisher"], correct: "Philippine Eagle" },
+        { q: "Sino ang kinikilalang Pambansang Bayani ng Pilipinas?", opts: ["Andres Bonifacio", "Jose Rizal", "Emilio Aguinaldo"], correct: "Jose Rizal" },
+        { q: "Ano ang pambansang prutas ng Pilipinas?", opts: ["Mango", "Banana", "Pineapple"], correct: "Mango" },
+        { q: "Ano ang pinakamalaking isla sa Pilipinas?", opts: ["Mindanao", "Luzon", "Palawan"], correct: "Luzon" },
+        { q: "Anong putaheng Filipino ang gawa sa karne o seafood na niluto sa suka at toyo?", opts: ["Sinigang", "Adobo", "Kare-Kare"], correct: "Adobo" },
+        { q: "Ano ang tradisyonal na instrumentong kawayan ng mga Filipino na pinapalo sa mga palad?", opts: ["Kulintang", "Tongatong", "Kubing"], correct: "Kubing" },
+        { q: "Ano ang karaniwang tawag ng mga Filipino sa kanilang makulay na pampublikong sasakyan?", opts: ["Jeepney", "Tricycle", "Pedicab"], correct: "Jeepney" },
     ];
 
-    function checkWin(player) {
-        return WIN_COMBOS.some(combo => combo.every(i => board[i] === player));
+    function checkWin(player) { return WIN_COMBOS.some(combo => combo.every(i => board[i] === player)); }
+
+    function startGame() {
+        showScreen('game-screen');
+        restart();
+    }
+
+    function backToMenu() {
+        showScreen('menu-screen');
     }
 
     function restart() {
@@ -161,11 +256,11 @@
             gameOver = true;
             const loser = currentTurn;
             const rival = loser === 'X' ? 'O' : 'X';
-            document.getElementById('status').textContent = `${loser} GOT THREE! ${rival} ANSWERS!`;
+            document.getElementById('status').textContent = `NAKATLONG SI ${loser}! SASAGOT SI ${rival}!`;
             setTimeout(() => showTrivia(loser, rival), 500);
         } else if (board.every(c => c !== null)) {
             gameOver = true;
-            document.getElementById('status').textContent = "★ TABLA! IT'S A DRAW! ★";
+            document.getElementById('status').textContent = "★ TABLAS! ★";
         } else {
             currentTurn = currentTurn === 'X' ? 'O' : 'X';
             updateStatus();
@@ -173,13 +268,13 @@
     }
 
     function updateStatus() {
-        document.getElementById('status').textContent = `${currentTurn}'S TURNO! INGAT!`;
+        document.getElementById('status').textContent = `TURNO NI ${currentTurn}! INGAT!`;
     }
 
     function showTrivia(loser, rival) {
         const question = QUESTIONS[Math.floor(Math.random() * QUESTIONS.length)];
-        document.getElementById('trivia-loser').textContent = `${loser} GOT THREE IN A ROW!`;
-        document.getElementById('trivia-instruction').textContent = `${rival} must answer to decide ${loser}'s fate:`;
+        document.getElementById('trivia-loser').textContent = `NAKATLONG SUNOD SI ${loser}!`;
+        document.getElementById('trivia-instruction').textContent = `Sagutin ni ${rival} para malaman ang kapalaran ni ${loser}:`;
         document.getElementById('trivia-question').textContent = question.q;
 
         const answersDiv = document.getElementById('trivia-answers');
@@ -194,7 +289,7 @@
 
         document.getElementById('trivia-result').style.display = 'none';
         document.getElementById('trivia-close').style.display = 'none';
-        document.getElementById('trivia-popup').style.display = 'flex';
+        document.getElementById('trivia-popup').classList.add('active');
     }
 
     function handleAnswer(selected, correct, loser, rival, clickedBtn, answersDiv) {
@@ -209,24 +304,24 @@
         resultEl.style.display = 'block';
 
         if (selected === correct) {
-            resultEl.textContent = `✔ TAMANG SAGOT!\n${rival} wins — ${loser} SABLAY!`;
+            resultEl.textContent = `✔ TAMA!\nNanalo si ${rival} — Natalo si ${loser}!`;
             resultEl.style.color = '#ffd43b';
-            document.getElementById('status').textContent = `★ ${rival} PANALO! ★`;
+            document.getElementById('status').textContent = `★ NANALO SI ${rival}! ★`;
         } else {
-            resultEl.textContent = `✘ MALI! The answer was "${correct}".\n${loser} wins — ${rival} SABLAY!`;
+            resultEl.textContent = `✘ MALI! Ang tamang sagot ay "${correct}".\nNanalo si ${loser} — Natalo si ${rival}!`;
             resultEl.style.color = '#e6372f';
-            document.getElementById('status').textContent = `★ ${loser} PANALO! ★`;
+            document.getElementById('status').textContent = `★ NANALO SI ${loser}! ★`;
         }
 
         document.getElementById('trivia-close').style.display = 'inline-block';
     }
 
     function closeTrivia() {
-        document.getElementById('trivia-popup').style.display = 'none';
+        document.getElementById('trivia-popup').classList.remove('active');
     }
 
-    // Initialize game on load
-    restart();
+    // Start the app
+    runLoading();
 </script>
 
 </body>
